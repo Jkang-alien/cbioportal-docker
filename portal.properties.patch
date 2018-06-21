@@ -53,3 +53,24 @@
  
  # pdb url
  pdb.database.url=http://rcsb.org/pdb/files/
+ 
+# authentication
+## is authorization enabled at all? (true, false)
+authorization=true
+## enable and set this property to specify a study group to be used to identify public studies for which no specific authorization entries are needed in the `authorities` table
+# always_show_study_group=
+## which method of authentication to use (false, googleplus, saml, openid, ad, ldap, noauthsessionservice)
+authenticate=googleplus
+## Should the permissions for groups and users be filtered by this instance's app.name?
+## (true means the system only handles "CBIOPORTAL:someGroupPermission" groups, false means "someGroupPermission" works)
+filter_groups_by_appname=true
+## settings to connect to googleplus auth infrastructure
+googleplus.consumer.key="896585556344-etjqab4gb136s320bdajn97so18v8j4p.apps.googleusercontent.com"
+googleplus.consumer.secret="vZceJtlvZyB_cWDL1q-jYBeW"
+
+
+# Enable Civic variant annotation (true, false)
+show.civic=true
+
+# Link to My Cancer Genome. Please disable (set to false) when using cBioPortal with patient identifiable data due My Cancer Genome license restrictions.
+mycancergenome.show=false
