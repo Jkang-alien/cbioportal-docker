@@ -1,13 +1,5 @@
 #!/bin/bash
 
-# reference
-
-# execute: user@device:directory# bash pipe.sh
-
-## set multi_thread
-
-## configure
-
 ## define program
 program_vcf2maf=/home/molpath/mskcc-vcf2maf-decbf60/vcf2maf.pl
 
