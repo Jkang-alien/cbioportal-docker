@@ -130,3 +130,105 @@ docker rmi cbioportal-image
 ## Data Loading & More commands
 
 For more uses of the cBioPortal image, see [example_commands.md](example_commands.md)
+
+
+######### https://hub.docker.com/r/thehyve/cbioportal/
+######### https://github.com/thehyve/cbioportal-docker
+sudo docker network create cbio-net
+docker run -d --restart=always \
+  --name=cbioDB \
+  --net=cbio-net \
+  -e MYSQL_ROOT_PASSWORD='P@ssword1' \
+  -e MYSQL_USER=cbio \
+  -e MYSQL_PASSWORD='P@ssword1' \
+  -e MYSQL_DATABASE=cbioportal \
+  mysql:5.7
+
+#### use version 5.7
+
+docker run \
+  --name=load-seeddb \
+  --net=cbio-net \
+  -e MYSQL_USER=cbio \
+  -e MYSQL_PASSWORD='P@ssword1' \
+  -v /home/molpath/cbioportal/cgds.sql:/mnt/cgds.sql:ro \
+  -v /home/molpath/cbioportal/seed-cbioportal_no-pdb_hg19.sql.gz:/mnt/seed.sql.gz:ro \
+  mysql:5.7 \
+  sh -c 'cat /mnt/cgds.sql | mysql -hcbioDB -ucbio -pP@ssword1 cbioportal \
+      && zcat /mnt/seed.sql.gz |  mysql -hcbioDB -ucbio -pP@ssword1 cbioportal'
+
+################ Build docker image cbioportal ####################
+####https://github.com/thehyve/cbioportal-docker/blob/master/docs/adjusting_configuration.md
+########## Fork github https://github.com/thehyve/cbioportal-docker ###################
+####### Edit portal.porperies file in local instance /home/cbioportal-docker
+####### change cbioDB user, password, etc.
+###### Build docker images with below command
+
+docker build -t cbioportal-image .
+
+#### Migration is neccessory
+docker run --rm -it --net cbio-net \
+    cbioportal-image \
+    migrate_db.py -p /cbioportal/src/main/resources/portal.properties -s /cbioportal/db-scripts/src/main/resources/migration.sql
+
+
+docker run -d --restart=always \
+    --name=cbioportal-container \
+    --net=cbio-net \
+    -e CATALINA_OPTS='-Xms2g -Xmx4g' \
+    -p 8081:8080 \
+    cbioportal-image
+
+################################################
+################# Import study #################
+####################################
+docker run --rm --net cbio-net \
+    -v "$PWD/portalinfo:/portalinfo" \
+    -w /cbioportal/core/src/main/scripts \
+    cbioportal-image \
+    ./dumpPortalInfo.pl /portalinfo
+
+
+docker run -it --rm --net cbio-net \
+    -v "$PWD:/study:ro" \
+    -v "$HOME/Desktop:/outdir" \
+    -v "$PWD/portalinfo:/portalinfo:ro" \
+    cbioportal-image \
+    metaImport.py -p /portalinfo -s /study -v -o
+
+docker restart cbioportal-container
+
+############# ###############################
+
+
+docker run -d --restart=always \
+    --name=kcdb \
+    --net=kcnet \
+    -e MYSQL_DATABASE=keycloak \
+    -e MYSQL_USER=keycloak \
+    -e MYSQL_PASSWORD='P@ssword1' \
+    -e MYSQL_ROOT_PASSWORD='P@ssword1' \
+    mysql:5.7
+
+docker run -d --restart=always \
+    --name=cbiokc \
+    --net=kcnet \
+    -p 8180:8080 \
+    -e MYSQL_PORT_3306_TCP_ADDR=kcdb \
+    -e MYSQL_PORT_3306_TCP_PORT=3306 \
+    -e KEYCLOAK_USER=admin \
+    -e KEYCLOAK_PASSWORD='P@ssword1' \
+    jboss/keycloak
+
+docker restart cbiokc
+
+
+keytool -genkey -alias secure-key -keyalg RSA -keystore samlKeystore.jks
+
+This will create a Java keystore for a key called: secure-key and place the keystore in a file named samlKeystore.jks. You will be prompted for:
+keystore password (required, for example: apollo1)
+your name, organization and location (optional)
+key password for secure-key (required, for example apollo2)
+valid redirect URIs http://10.***.***:8081/cbioportal/*
+clients → cbioportal → mappers → create → name (roles) mapper type (role list)
+
