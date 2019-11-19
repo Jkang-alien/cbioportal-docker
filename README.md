@@ -152,8 +152,8 @@ docker run \
   --net=cbio-net \
   -e MYSQL_USER=cbio \
   -e MYSQL_PASSWORD='P@ssword1' \
-  -v /home/molpath/cbioportal/cgds.sql:/mnt/cgds.sql:ro \
-  -v /home/molpath/cbioportal/seed-cbioportal_no-pdb_hg19.sql.gz:/mnt/seed.sql.gz:ro \
+  -v /your/directory/path/cgds.sql:/mnt/cgds.sql:ro \
+  -v /your/directory/path/seed-cbioportal_no-pdb_hg19.sql.gz:/mnt/seed.sql.gz:ro \
   mysql:5.7 \
   sh -c 'cat /mnt/cgds.sql | mysql -hcbioDB -ucbio -pP@ssword1 cbioportal \
       && zcat /mnt/seed.sql.gz |  mysql -hcbioDB -ucbio -pP@ssword1 cbioportal'
@@ -161,8 +161,11 @@ docker run \
 ################ Build docker image cbioportal ####################
 ####https://github.com/thehyve/cbioportal-docker/blob/master/docs/adjusting_configuration.md
 ########## Fork github https://github.com/thehyve/cbioportal-docker ###################
-####### Edit portal.porperies file in local instance /home/cbioportal-docker
-####### change cbioDB user, password, etc.
+####### Edit portal.properties file in local instance /home/cbioportal-docker
+####### Change cbioDB user, password, etc.
+####### Edit docker.file 
+####### Change portal.properties file and log4.properties file location
+
 ###### Build docker images with below command
 ```
 docker build -t cbioportal-image .
@@ -183,7 +186,11 @@ docker run -d --restart=always \
 ```
 ################################################
 ################# Import study #################
-####################################
+################################################
+
+##### VEP install
+##### genome reference (16g) download from Ensembl takes long time (3days)
+
 ```
 docker run --rm --net cbio-net \
     -v "$PWD/portalinfo:/portalinfo" \
