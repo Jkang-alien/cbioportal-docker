@@ -132,8 +132,8 @@ docker rmi cbioportal-image
 For more uses of the cBioPortal image, see [example_commands.md](example_commands.md)
 
 
-######### https://hub.docker.com/r/thehyve/cbioportal/
-######### https://github.com/thehyve/cbioportal-docker
+##### https://hub.docker.com/r/thehyve/cbioportal/
+##### https://github.com/thehyve/cbioportal-docker
 ```
 sudo docker network create cbio-net
 docker run -d --restart=always \
@@ -158,15 +158,15 @@ docker run \
   sh -c 'cat /mnt/cgds.sql | mysql -hcbioDB -ucbio -pP@ssword1 cbioportal \
       && zcat /mnt/seed.sql.gz |  mysql -hcbioDB -ucbio -pP@ssword1 cbioportal'
 ```
-################ Build docker image cbioportal ####################
-####https://github.com/thehyve/cbioportal-docker/blob/master/docs/adjusting_configuration.md
-########## Fork github https://github.com/thehyve/cbioportal-docker ###################
-####### Edit portal.properties file in local instance /home/cbioportal-docker
-####### Change cbioDB user, password, etc.
-####### Edit docker.file 
-####### Change portal.properties file and log4.properties file location
+### Build docker image cbioportal 
+#### https://github.com/thehyve/cbioportal-docker/blob/master/docs/adjusting_configuration.md
+#### Fork github https://github.com/thehyve/cbioportal-docker 
+#### Edit portal.properties file in local instance /home/cbioportal-docker
+#### Change cbioDB user, password, etc.
+#### Edit docker.file 
+#### Change portal.properties file and log4.properties file location
 
-###### Build docker images with below command
+#### Build docker images with below command
 ```
 docker build -t cbioportal-image .
 ```
@@ -184,9 +184,8 @@ docker run -d --restart=always \
     -p 8081:8080 \
     cbioportal-image
 ```
-################################################
-################# Import study #################
-################################################
+
+#### Import study 
 
 ##### VEP install
 ##### genome reference (16g) download from Ensembl takes long time (3days)
@@ -209,7 +208,7 @@ docker run -it --rm --net cbio-net \
 ```
 docker restart cbioportal-container
 ```
-############# ###############################
+
 ```
 docker run -d --restart=always \
     --name=kcdb \
