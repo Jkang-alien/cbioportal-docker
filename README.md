@@ -205,6 +205,15 @@ docker run -it --rm --net cbio-net \
     cbioportal-image \
     metaImport.py -p /portalinfo -s /study -v -o
 ```
+
+```
+docker run -it --rm --net cbio-net \
+    -v "$PWD:/study:ro" \
+    -v "$HOME/Desktop:/outdir" \
+    -v "$PWD/portalinfo:/portalinfo:ro" \
+    cbioportal-image \
+    cbioportalImporter.py -c remove-study -meta /study/cmc_oca/meta_study.txt
+
 ```
 docker restart cbioportal-container
 ```
