@@ -215,6 +215,7 @@ docker run -it --rm --net cbio-net \
     cbioportalImporter.py -c remove-study -meta /study/cmc_oca/meta_study.txt
 
 ```
+```
 docker restart cbioportal-container
 ```
 
